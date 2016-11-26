@@ -1,0 +1,505 @@
+<enumeration length='4' xmlns='http://cs.utk.edu/sqrl/pse'>
+  <version id='$Id: $'/>
+  <name value='Cruise_Control'>Cruise Control Enumeration</name>
+  <require id='D4caroff'>All inputs are non responsive till the car has been started.</require>
+  <require id='R5carOff'>The system terminates when the car&apos;s ignition is turned off.
+
+</require>
+  <require id='D3~passive'>if in passive mode, releasing the accelator takes cruise control out of passive mode</require>
+  <require id='R3brake'>An active cruise control system is automatically deactivated if the driver engages the brake (presumably to react to road or traffic conditions), or the accelerator pedal</require>
+  <require id='D1passive'>If in cruise mode, pressing the accelerator puts cruise control in passive mode</require>
+  <require id='D11'>Cruise Control is taken out of passive mode when the accelerator is released.</require>
+  <require id='D12'>The cruise control system will only respond to the activate button when the cruise control system if off.</require>
+  <require id='D10resume'>A cruise control can only be resumed if it was activated atleast once.</require>
+  <require id='D7ccreset'>Once the car has been started, additional ignition starts will act as a cruise control system reset.</require>
+  <require id='R8display'>When cruise control is activated, a red indication light is turned on, and the cruise speed is displayed on the dashboard.
+</require>
+  <require id='D2~display'>If cruise control is not active, red indicator light is off and the cruise speed is not displayed on the dashboard</require>
+  <require id='R2&gt;50'>The cruise control system can be activated only if the car is traveling at least 60 km/hr and if the brake is not being pressed. </require>
+  <require id='R7deactivate'>if the system is deactivated. When cruise control Is resumed, the speed-to-be-maintained will be whatever value it was when the cruise control system was last active. The command to resume cruise control will succeed only if the brake pedal is not being pressed.
+
+</require>
+  <require id='D9passive'>In passive mode, the cruise control system will not try to control the speed of the car since the driver is pressing the accelerator.</require>
+  <require id='R4resume'>The driver can resume a deactivated cruise control system. </require>
+  <require id='D8release'>In cruise control active mode,   the brake release and accelerator release events cause no response.
+In cruise control passive mode, the brake release and accelerator press events cause no response.</require>
+  <require id='D6resume'> The cruise control can only be resumed by c_resume when the speed-to-be-maintained is set.</require>
+  <require id='D5ccinactive'>When the cruise control system is off or deactivated, all inputs except c_active or c_resume, which can activate the cruise control system, are ignored. </require>
+  <require id='R1highspeed'>When active, the system keeps the vehicle traveling steadily at the driver-specified high speed, without the driver having to keep his foot on the accelerator pedal. </require>
+  <require id='R6ccActive'>The speed-to-be-maintained is initially the current speed of the vehicle when cruise control is activated.</require>
+  <interface id='Ignition System'>The system which deals with the components dealing with the starting of the engine.</interface>
+  <interface id='Cruise Control Panel'>The set of cruise control buttons found on the steering wheel column.</interface>
+  <interface id='Brake System'>System which controls the brake pads and related components which stop the car.</interface>
+  <interface id='Fuel Injection System'>Controls the amount of gas sent to the engine.</interface>
+  <interface id='Dashboard'>The enclosure to the set of guages that sit infront of the driver.</interface>
+  <output id='e_decelerate' lname='decelerate'>
+  <interfaceref id='Fuel Injection System'/>
+  </output>
+  <output id='STBM' lname='set speed-to-be-maintained'>set speed to be maintained<trace id='R1highspeed'/>
+    <trace id='R2&gt;50'/>
+    <trace id='R8display'/>
+    <interfaceref id='Cruise Control Panel'/>
+  </output>
+  <output id='inc_cc_speed' lname='Increase Cruise Control Speed'>This increase the speed to be maintained by 1 kph<interfaceref id='Cruise Control Panel'/>
+  </output>
+  <output id='c_light_deactivate' lname='turn off cruise control light'>
+  <trace id='D2~display'/>
+    <interfaceref id='Dashboard'/>
+  </output>
+  <output id='clear_cc_speed' lname='Clear Cruise Control Speed'>Clears the cruise control speed whenever the system is deactived<trace id='D2~display'/>
+    <interfaceref id='Dashboard'/>
+  </output>
+  <output id='display_cc_speed' lname='Display Cruise Control Speed'>display the current cruise control speed on the dashboard<trace id='R8display'/>
+    <interfaceref id='Dashboard'/>
+  </output>
+  <output id='e_accelerate' lname='accelerate'>
+  <interfaceref id='Fuel Injection System'/>
+  </output>
+  <output id='c_light_activate' lname='turn on cruise control light'>
+  <trace id='R8display'/>
+    <interfaceref id='Dashboard'/>
+  </output>
+  <output id='RSTBM' lname='Restore Speed-to-be-maintained'>Restores the speed to be maintained by setting cc_speed to last cc_speed stored.<trace id='R7deactivate'/>
+    <interfaceref id='Cruise Control Panel'/>
+  </output>
+  <output id='dec_cc_speed' lname='Decrease Cruise Control Speed'>This decrease the speed to be maintained by 1 kph<interfaceref id='Cruise Control Panel'/>
+  </output>
+  <output id='curr_cc_speed' lname='Current Cruise Control Speed'>Sets the current cruise control speed<trace id='R6ccActive'/>
+    <interfaceref id='Cruise Control Panel'/>
+  </output>
+  <stimulus id='c_decr' lname='decrement button'>used when cruise control is active to decrement the speed-to-be-maintained.
+<interfaceref id='Cruise Control Panel'/>
+  </stimulus>
+  <stimulus id='c_active' lname='activate button'>used to activate cruise control.  <trace id='R2&gt;50'/>
+    <trace id='R6ccActive'/>
+    <trace id='R8display'/>
+    <interfaceref id='Cruise Control Panel'/>
+  </stimulus>
+  <stimulus id='i_off' lname='ignition off event'>an event indicating that the driver has stopped pressing the accelerator pedal
+<interfaceref id='Ignition System'/>
+  </stimulus>
+  <stimulus id='b_released' lname='brake pedal released event'>an event indicating that the driver has stopped pressing the brake pedal.
+<interfaceref id='Brake System'/>
+  </stimulus>
+  <stimulus id='c_incr' lname='increment button'>used when cruise control is active to increment the speed-to-be-maintained<interfaceref id='Cruise Control Panel'/>
+  </stimulus>
+  <stimulus id='d_speed_value' lname='speed value'>an event communicating the current speed of the car<trace id='R1highspeed'/>
+    <interfaceref id='Dashboard'/>
+  </stimulus>
+  <stimulus id='a_pressed' lname='accelerator pedal pressed event'>an event indicating that the driver has pressed the accelerator pedal
+<trace id='D1passive'/>
+    <interfaceref id='Fuel Injection System'/>
+  </stimulus>
+  <stimulus id='c_resume' lname='resume button'> used to resume cruise control, if the system is deactivated.<trace id='R7deactivate'/>
+    <trace id='R4resume'/>
+    <trace id='R2&gt;50'/>
+    <trace id='R8display'/>
+    <interfaceref id='Cruise Control Panel'/>
+  </stimulus>
+  <stimulus id='b_pressed' lname='brake pedal pressed event'>an event indicating that the driver has pressed the brake pedal.
+<interfaceref id='Brake System'/>
+  </stimulus>
+  <stimulus id='a_released' lname='accelerator pedal released event'> an event indicating that the driver has stopped pressing the accelerator pedal
+<trace id='R1highspeed'/>
+    <trace id='D3~passive'/>
+    <interfaceref id='Fuel Injection System'/>
+  </stimulus>
+  <stimulus id='i_on' lname='ignition on event'>an event indicating that the driver has stopped pressing the accelerator pedal
+<interfaceref id='Ignition System'/>
+  </stimulus>
+  <response id='activate cc_system'>
+    <output id='c_light_activate'/>
+    <output id='STBM'/>
+    <output id='display_cc_speed'/>
+  </response>
+  <response id='clear/reset/deactive cc_system'>
+    <output id='clear_cc_speed'/>
+    <output id='c_light_deactivate'/>
+  </response>
+  <response id='put_cc_in_passivemode'>
+    <output id='STBM'/>
+  </response>
+  <response id='resume_cc'>
+    <output id='RSTBM'/>
+    <output id='c_light_activate'/>
+    <output id='display_cc_speed'/>
+  </response>
+  <predicate id='curr_speed_too_high'>actual speed &gt; speed_to_be_maintained</predicate>
+  <predicate id='curr_speed_too_low'>actual speed &lt; speed_to_be_maintained</predicate>
+  <predicate id='permit_cc'>curr_speed &gt; 60 kph<trace id='R2&gt;50'/>
+  </predicate>
+  <map id='lambda'>
+    <prefix id='lambda'/>
+    <response/>
+  </map>
+  <map id='a_pressed'>
+    <prefix id='lambda'/>
+    <stimulus id='a_pressed'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='a_released'>
+    <prefix id='lambda'/>
+    <stimulus id='a_released'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='b_pressed'>
+    <prefix id='lambda'/>
+    <stimulus id='b_pressed'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='b_released'>
+    <prefix id='lambda'/>
+    <stimulus id='b_released'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='c_active'>
+    <prefix id='lambda'/>
+    <stimulus id='c_active'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='c_decr'>
+    <prefix id='lambda'/>
+    <stimulus id='c_decr'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='c_incr'>
+    <prefix id='lambda'/>
+    <stimulus id='c_incr'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='c_resume'>
+    <prefix id='lambda'/>
+    <stimulus id='c_resume'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='d_speed_value'>
+    <prefix id='lambda'/>
+    <stimulus id='d_speed_value'/>
+    <trace id='D4caroff'/>
+    <response output='illegal'/>
+  </map>
+  <map id='i_off'>
+    <prefix id='lambda'/>
+    <stimulus id='i_off'/>
+    <trace id='R5carOff'/>
+    <trace id='D2~display'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='lambda'/>
+  </map>
+  <map id='i_on'>
+    <prefix id='lambda'/>
+    <stimulus id='i_on'/>
+    <trace id='D2~display'/>
+    <trace id='D7ccreset'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+  </map>
+  <map id='i_on.a_pressed'>
+    <prefix id='i_on'/>
+    <stimulus id='a_pressed'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.a_released'>
+    <prefix id='i_on'/>
+    <stimulus id='a_released'/>
+    <trace id='D8release'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.b_pressed'>
+    <prefix id='i_on'/>
+    <stimulus id='b_pressed'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.b_released'>
+    <prefix id='i_on'/>
+    <stimulus id='b_released'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=false&gt;'>
+    <prefix id='i_on'/>
+    <stimulus id='c_active'>
+      <predicate id='permit_cc' value='false'/>
+    </stimulus>
+    <trace id='R8display'/>
+    <trace id='R6ccActive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;'>
+    <prefix id='i_on'/>
+    <stimulus id='c_active'>
+      <predicate id='permit_cc' value='true'/>
+    </stimulus>
+    <trace id='R8display'/>
+    <trace id='R6ccActive'/>
+    <response>
+      <response id='activate cc_system'/>
+    </response>
+  </map>
+  <map id='i_on.c_decr'>
+    <prefix id='i_on'/>
+    <stimulus id='c_decr'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_incr'>
+    <prefix id='i_on'/>
+    <stimulus id='c_incr'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_resume'>
+    <prefix id='i_on'/>
+    <stimulus id='c_resume'/>
+    <trace id='D10resume'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.d_speed_value'>
+    <prefix id='i_on'/>
+    <stimulus id='d_speed_value'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.i_off'>
+    <prefix id='i_on'/>
+    <stimulus id='i_off'/>
+    <trace id='R5carOff'/>
+    <trace id='D2~display'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='lambda'/>
+  </map>
+  <map id='i_on.i_on'>
+    <prefix id='i_on'/>
+    <stimulus id='i_on'/>
+    <trace id='D2~display'/>
+    <trace id='D7ccreset'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='a_pressed'/>
+    <trace id='D1passive'/>
+    <response>
+      <response id='put_cc_in_passivemode'/>
+    </response>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_released'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='a_released'/>
+    <trace id='D8release'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='b_pressed'/>
+    <trace id='D2~display'/>
+    <trace id='R3brake'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_released'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='b_released'/>
+    <trace id='D8release'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.c_active'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='c_active'/>
+    <trace id='D12'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.c_incr'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='c_incr'/>
+    <trace id='D5ccinactive'/>
+    <response output='illegal'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.c_resume'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='c_resume'/>
+    <trace id='D10resume'/>
+    <response output='illegal'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.i_off'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='i_off'/>
+    <trace id='R5carOff'/>
+    <trace id='D2~display'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='lambda'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.i_on'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+    <stimulus id='i_on'/>
+    <trace id='D2~display'/>
+    <trace id='D7ccreset'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.a_pressed'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='a_pressed'/>
+    <trace id='D8release'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.a_released'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='a_released'/>
+    <trace id='D11'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.c_active'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='c_active'/>
+    <trace id='D12'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.c_resume'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='c_resume'/>
+    <trace id='D10resume'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.d_speed_value'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='d_speed_value'/>
+    <trace id='D9passive'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.i_off'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='i_off'/>
+    <trace id='R5carOff'/>
+    <trace id='D2~display'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='lambda'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed.i_on'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+    <stimulus id='i_on'/>
+    <trace id='D2~display'/>
+    <trace id='D7ccreset'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.a_pressed'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='a_pressed'/>
+    <trace id='R3brake'/>
+    <response/>
+    <equivalent id='i_on'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.a_released'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='a_released'/>
+    <trace id='D8release'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.c_active'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='c_active'/>
+    <trace id='D12'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.c_resume&lt;permit_cc()=false&gt;'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='c_resume'>
+      <predicate id='permit_cc' value='false'/>
+    </stimulus>
+    <trace id='R4resume'/>
+    <trace id='R2&gt;50'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.c_resume&lt;permit_cc()=true&gt;'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='c_resume'>
+      <predicate id='permit_cc' value='true'/>
+    </stimulus>
+    <trace id='R4resume'/>
+    <trace id='R2&gt;50'/>
+    <response>
+      <response id='resume_cc'/>
+    </response>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.d_speed_value'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='d_speed_value'/>
+    <trace id='D5ccinactive'/>
+    <response/>
+    <equivalent id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.i_off'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='i_off'/>
+    <trace id='R5carOff'/>
+    <trace id='D2~display'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='lambda'/>
+  </map>
+  <map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed.i_on'>
+    <prefix id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+    <stimulus id='i_on'/>
+    <trace id='D2~display'/>
+    <trace id='D7ccreset'/>
+    <response>
+      <response id='clear/reset/deactive cc_system'/>
+    </response>
+    <equivalent id='i_on'/>
+  </map>
+  <canonical_sequence_map id='i_on.c_active&lt;permit_cc()=true&gt;.a_pressed'/>
+  <canonical_sequence_map id='i_on.c_active&lt;permit_cc()=true&gt;'/>
+  <canonical_sequence_map id='lambda'/>
+  <canonical_sequence_map id='i_on.c_active&lt;permit_cc()=true&gt;.b_pressed'/>
+  <canonical_sequence_map id='i_on'/>
+</enumeration>

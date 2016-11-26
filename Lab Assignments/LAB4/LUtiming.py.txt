@@ -1,0 +1,83 @@
+#!/usr/bin/python
+###############################################################################
+#
+# Timing driver for Lab 5 (LU decomp. pivoting w/o row swapping).
+#
+# 1) The driver assumes that you will name your module 'LUnoswap.py',
+#    that your updated "LUdecomp" will be called "NSdecomp", and that
+#    your updated "LUsolve" will be called "NSsolve".
+#
+#    This is not mandatory, feel free to use whatever file names/function
+#    names you want. Just make sure to change this code accordingly and
+#    submit it along with your module.
+#
+# 2) n = 500 on line 48 determines the size of the random matrix. Feel free
+#    to experiment with this parameter (e.g., double it and see what happens
+#    to elapsed time on both tests).
+#
+# Besides the above, you should not make any changes to this file.
+# All your code should be placed in a separate module file. I recommend that
+# you start by making a copy of LUpivot.py -- this assignment will be much
+# easier if you edit that code, rather than starting from scratch.
+#
+###############################################################################
+
+from numpy import *
+from numpy.random import rand
+from LUpivot import *
+from LUnoswap import *
+import numpy.linalg
+import time
+
+# Test 1 -- original LU decomp. code that features swapping
+def test1(A,b):
+  print " ------   Beginning Test 1 (LU decomp. w/ row swapping) ------ "
+  A, seq = LUdecomp(A)
+  x1 = LUsolve(A,b,seq)
+  print " ------   End of Test 1  ------ \n"
+  return x1
+
+# Test 2 -- your update LU decomp. code that uses sub-indexing
+def test2(A,b):
+  print " ------   Beginning Test 2 (LU decomp. w/o row swapping) ------ "
+  A, seq = NSdecomp(A)
+  x2 = NSsolve(A,b,seq)
+  print " ------   End of Test 2  ------ \n"
+  return x2
+
+# generate a non-singular random mtrx (det == 0 if a matrix is singular)
+n = 500
+det = 0
+while det < 1e-5:
+  A = rand(n,n)
+  det = linalg.det(A)
+
+# generate a random vector
+b = rand(n)
+
+
+# save the originals-- want to time code on the same mtrx and vec later
+A_orig = A.copy()
+b_orig = b.copy()
+
+# timing of original code begins
+#t = Timer("test1(A,b)")
+#print t.timeit()
+start1=time.clock()
+x1=test1(A,b)
+
+end1 = time.clock()
+# timing of original code ends here, reset A and b
+A = A_orig.copy()
+b = b_orig.copy()
+# timing of modified, no-swap code begins
+start2 = time.clock()
+x2=test2(A,b)
+
+end2 = time.clock()
+# timing ends, print results:
+print "Test 1 (swapping)    elapsed CPU time: ", end1-start1, " seconds."
+print "Test 2 (no swapping) elapsed CPU time: ", end2-start2, " seconds."
+#print "x1 = ", x1
+#print "x2 = ", x2
+print "Error between methods: ", linalg.norm(x1-x2)
